@@ -1,7 +1,8 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { fetchAllReviews } from '../lib/fetchReviews';
 import { computeMetrics, formatINR } from '../lib/computeMetrics';
+import { downloadCSV } from '../lib/exportUtils';
 import KPICard from '../components/KPICard';
 import ExecutiveSummary from '../components/ExecutiveSummary';
 import ProgressBar from '../components/ProgressBar';
@@ -13,37 +14,70 @@ import ResponseGap from '../components/ResponseGap';
 const TOTAL_REVIEWS = 5000;
  
 export default function Dashboard() {
-  const [metrics, setMetrics] = useState(null);
+  const [allReviews, setAllReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [fetchedCount, setFetchedCount] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
+
+  // Filters State
+  const [filters, setFilters] = useState({
+    platform: 'All',
+    product: 'All',
+  });
  
   useEffect(() => {
     fetchAllReviews(
-      (allReviews, count) => {
+      (batch, count) => {
         setFetchedCount(count);
-        if (allReviews.length > 0) {
-          const m = computeMetrics(allReviews);
-          setMetrics(m);
-        }
+        setAllReviews(batch);
       },
-      () => {
+      (final) => {
+        setAllReviews(final);
         setIsDone(true);
         setLoading(false);
       }
     );
   }, []);
+
+  // Unique Filter Options
+  const platforms = useMemo(() => ['All', ...new Set(allReviews.map(r => r.platform))].filter(Boolean), [allReviews]);
+  const products = useMemo(() => ['All', ...new Set(allReviews.map(r => r.product))].filter(Boolean), [allReviews]);
+
+  // Derived Metrics based on Filters
+  const metrics = useMemo(() => {
+    let filtered = allReviews;
+    if (filters.platform !== 'All') {
+      filtered = filtered.filter(r => r.platform === filters.platform);
+    }
+    if (filters.product !== 'All') {
+      filtered = filtered.filter(r => r.product === filters.product);
+    }
+    return computeMetrics(filtered);
+  }, [allReviews, filters]);
+
+  const handleExport = () => {
+    if (!metrics || !metrics.issueStats) return;
+    const exportData = metrics.issueStats.map(stat => ({
+      Issue: stat.name,
+      Complaints: stat.complaint_count,
+      Avg_LTV: Math.round(stat.avg_ltv),
+      Total_LTV_Risk: stat.total_ltv_at_risk,
+      Repeat_Rate: `${stat.pct_repeat_customers}%`,
+      Rating: stat.avg_rating,
+      Response_Rate: `${stat.brand_response_pct}%`
+    }));
+    downloadCSV(exportData, `mosaic_lens_report_${new Date().toISOString().split('T')[0]}.csv`);
+  };
  
   return (
     <div style={{ minHeight: '100vh', paddingTop: isDone ? '0' : '44px' }}>
-      {/* Progress Bar */}
       <ProgressBar fetched={fetchedCount} total={TOTAL_REVIEWS} done={isDone} />
 
       {/* Header */}
       <header
         style={{
-          padding: '24px 32px',
+          padding: '16px 32px',
           borderBottom: '1px solid var(--border)',
           display: 'flex',
           justifyContent: 'space-between',
@@ -56,65 +90,118 @@ export default function Dashboard() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Logo mark */}
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-cyan))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: 800,
-              color: '#fff',
-              flexShrink: 0,
-            }}
-          >
-            ML
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="Logo" 
+            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+          />
           <div>
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-              }}
-            >
+            <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
               Mosaic Lens
             </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-              CX INTELLIGENCE
+            <div style={{ fontSize: '10px', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
+              CX INTELLIGENCE DASHBOARD
             </div>
           </div>
         </div>
 
-        <div
-          style={{
-            fontSize: '11px',
-            color: 'var(--text-muted)',
-            textAlign: 'right',
-            letterSpacing: '0.05em',
-          }}
-        >
-          <div>Revenue-weighted complaint analysis</div>
-          <div style={{ color: 'var(--text-muted)', marginTop: '2px' }}>
-            {isDone ? (
-              <span style={{ color: '#10b981' }}>
-                ✓ {fetchedCount.toLocaleString('en-IN')} reviews analysed
-              </span>
-            ) : (
-              <span style={{ color: 'var(--accent-cyan)' }}>
-                Live — {fetchedCount.toLocaleString('en-IN')} / {TOTAL_REVIEWS.toLocaleString('en-IN')} reviews
-              </span>
-            )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+           {/* Export Button */}
+           {isDone && (
+            <button
+              onClick={handleExport}
+              style={{
+                background: 'var(--text-primary)',
+                color: 'var(--bg-panel)',
+                border: 'none',
+                padding: '8px 16px',
+                fontSize: '11px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                letterSpacing: '0.05em',
+                transition: 'opacity 0.2s',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.9'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              DOWNLOAD REPORT (.CSV)
+            </button>
+          )}
+
+          <div style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'right' }}>
+            <div style={{ fontWeight: 600 }}>{fetchedCount.toLocaleString('en-IN')} units processed</div>
+            <div style={{ color: isDone ? '#10b981' : 'var(--accent-cyan)' }}>
+              {isDone ? '✓ ANALYSIS COMPLETE' : '• LIVE STREAMING'}
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main content */}
       <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
+
+        {/* Global Filter Bar */}
+        <div 
+          className="card" 
+          style={{ 
+            padding: '16px 24px', 
+            marginBottom: '24px', 
+            display: 'flex', 
+            gap: '32px', 
+            alignItems: 'center',
+            background: 'var(--bg-panel)'
+          }}
+        >
+          <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            Intelligence Filters
+          </div>
+          
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Platform:</label>
+            <select 
+              value={filters.platform}
+              onChange={(e) => setFilters(prev => ({ ...prev, platform: e.target.value }))}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                padding: '4px 8px',
+                fontSize: '12px',
+                outline: 'none'
+              }}
+            >
+              {platforms.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Product:</label>
+            <select 
+              value={filters.product}
+              onChange={(e) => setFilters(prev => ({ ...prev, product: e.target.value }))}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                padding: '4px 8px',
+                fontSize: '12px',
+                outline: 'none',
+                maxWidth: '200px'
+              }}
+            >
+              {products.map(p => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </div>
+
+          {(filters.platform !== 'All' || filters.product !== 'All') && (
+            <button 
+              onClick={() => setFilters({ platform: 'All', product: 'All' })}
+              style={{ fontSize: '11px', color: 'var(--accent-blue)', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
+            >
+              Reset Filters
+            </button>
+          )}
+        </div>
 
         {/* KPI Strip */}
         <div
@@ -127,9 +214,9 @@ export default function Dashboard() {
           }}
         >
           <KPICard
-            label="Reviews Analysed"
-            value={fetchedCount.toLocaleString('en-IN')}
-            sub={isDone ? 'Full dataset loaded' : 'Loading more...'}
+            label="Filtered Segment"
+            value={(metrics?.issueStats?.reduce((acc, s) => acc + s.complaint_count, 0) || 0).toLocaleString('en-IN')}
+            sub="Total relevant reviews"
           />
           <KPICard
             label="Total LTV at Risk"
@@ -137,29 +224,25 @@ export default function Dashboard() {
             sub="Repeat customers, rating ≤ 2"
             accent
             loading={loading}
-          >
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
-              Worst-case exposure: full LTV of repeat customers with rating ≤ 2
-            </div>
-          </KPICard>
+          />
           <KPICard
             label="Urgent — Last 30 Days"
             value={metrics ? formatINR(metrics.urgentChurnLTV) : '—'}
-            sub="Still in reorder window"
+            sub="Friction in reorder window"
             danger
             loading={loading}
           />
           <KPICard
             label="Response Gap"
             value={metrics ? `${metrics.responseGapPct}%` : '—'}
-            sub="High-value complaints ignored"
+            sub="Silence on high-value friction"
             loading={loading}
           />
         </div>
 
         {/* Executive Summary */}
         <div style={{ marginBottom: '24px' }}>
-          <ExecutiveSummary metrics={metrics} totalReviews={fetchedCount} />
+          <ExecutiveSummary metrics={metrics} totalReviews={allReviews.length} />
         </div>
 
         {/* Issue Priority Table */}
@@ -170,31 +253,13 @@ export default function Dashboard() {
               onRowClick={(issue) => setSelectedIssue(issue)}
             />
           ) : (
-            <div
-              className="card"
-              style={{
-                backgroundColor: 'rgba(0, 0, 0, 0.02)',
-                color: 'var(--text-muted)',
-                fontSize: '14px',
-              }}
-            >
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  border: '2px solid var(--accent-blue)',
-                  borderTopColor: 'transparent',
-                  borderRadius: '50%',
-                  margin: '0 auto 16px',
-                  animation: 'spin 1s linear infinite',
-                }}
-              />
-              Building issue priority table...
+            <div className="card" style={{ padding: '48px', textAlign: 'center', color: 'var(--text-muted)' }}>
+              Loading intelligence matrix...
             </div>
           )}
         </div>
 
-        {/* Product + Platform charts */}
+        {/* Charts Section */}
         {metrics && (
           <>
             <div
@@ -216,80 +281,11 @@ export default function Dashboard() {
 
             <div style={{ marginBottom: '24px' }}>
               <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Geographic Risk Concentration
+                Geographic Risk Hotspots
               </div>
               <CityRiskChart cityBreakdown={metrics.cityBreakdown} />
             </div>
           </>
-        )}
-
-        {/* Co-occurrence insight */}
-        {metrics && metrics.topCoOccurrences && metrics.topCoOccurrences.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <div className="card" style={{ padding: '20px', overflowX: 'auto' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  marginBottom: '4px',
-                  minWidth: '350px'
-                }}
-              >
-                Issue Co-occurrence — Systemic Patterns
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--text-secondary)',
-                  marginBottom: '16px',
-                  minWidth: '350px'
-                }}
-              >
-                Issues that appear together in the same review reveal process failures, not isolated incidents
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '350px' }}>
-                {metrics.topCoOccurrences.map((pair) => (
-                  <div
-                    key={`${pair.issueA}|${pair.issueB}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '10px 14px',
-                      background: 'rgba(37, 99, 235, 0.03)',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: 'Space Mono, monospace',
-                        fontSize: '20px',
-                        fontWeight: 700,
-                        color: 'var(--accent-blue)',
-                        minWidth: '40px',
-                      }}
-                    >
-                      {pair.count}
-                    </span>
-                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                      reviews mention both{' '}
-                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelA}</strong> and{' '}
-                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelB}</strong> —
-                      likely one systemic failure with two symptoms
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Response Gap */}
-        {metrics && (
-          <div style={{ marginBottom: '32px' }}>
-            <ResponseGap metrics={metrics} />
-          </div>
         )}
 
         {/* Footer */}
@@ -306,7 +302,7 @@ export default function Dashboard() {
             Mosaic Lens · CX Intelligence Dashboard
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'Space Mono, monospace' }}>
-            Data: mosaicfellowship.in/api · {new Date().getFullYear()}
+            {new Date().getFullYear()} · Final Submission
           </div>
         </div>
       </main>
@@ -319,15 +315,13 @@ export default function Dashboard() {
       />
 
       <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
         @media (max-width: 900px) {
           .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
           .charts-grid { grid-template-columns: 1fr !important; }
         }
         @media (max-width: 600px) {
           .kpi-grid { grid-template-columns: 1fr !important; }
+          main { padding: 20px !important; }
         }
       `}</style>
     </div>
