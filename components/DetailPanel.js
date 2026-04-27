@@ -138,7 +138,7 @@ export default function DetailPanel({ issue, coOccurrences, onClose }) {
                 </div>
                 
                 <p style={{ margin: '0 0 12px 0', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                  "{r.review_text}"
+                  &quot;{r.review_text}&quot;
                 </p>
 
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '11px' }}>
