@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import { fetchAllReviews } from '../lib/fetchReviews';
 import { computeMetrics, formatINR } from '../lib/computeMetrics';
 import { downloadCSV } from '../lib/exportUtils';
@@ -90,10 +91,13 @@ export default function Dashboard() {
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <img 
+          <Image 
             src="/logo.png" 
             alt="Logo" 
-            style={{ width: '40px', height: '40px', objectFit: 'contain' }}
+            width={40}
+            height={40}
+            style={{ objectFit: 'contain' }}
+            priority
           />
           <div>
             <div style={{ fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>

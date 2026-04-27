@@ -15,7 +15,7 @@ export default function IssueTable({ issueStats, onRowClick }) {
     }
   };
 
-  const sortedData = [...issueStats].sort((a, b) => {
+  const sortedData = [...(issueStats || [])].sort((a, b) => {
     let valA = a[sortCol];
     let valB = b[sortCol];
     if (valA < valB) return sortDesc ? 1 : -1;
