@@ -16,6 +16,9 @@ export default function ExecutiveSummary({ metrics, totalReviews }) {
 
   return (
     <div className="card" style={{ padding: '24px', borderLeft: '4px solid var(--accent-blue)', background: 'var(--bg-panel)' }}>
+      <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '20px', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+        Executive Summary
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
         
         {/* Risk Column */}
