@@ -10,20 +10,34 @@ export default function ProgressBar({ fetched, total, done }) {
         top: 0,
         left: 0,
         right: 0,
-        height: '4px',
-        backgroundColor: 'rgba(59, 130, 246, 0.2)',
-        zIndex: 100,
+        height: '1px',
+        background: 'var(--border)',
+        zIndex: 1000,
       }}
     >
       <div
         style={{
           height: '100%',
           width: `${percentage}%`,
-          backgroundColor: 'var(--accent-blue)',
-          boxShadow: '0 0 10px var(--accent-blue)',
-          transition: 'width 0.3s ease-out',
+          background: 'var(--text-primary)',
+          transition: 'width 0.8s cubic-bezier(0.65, 0, 0.35, 1)',
+          boxShadow: '0 0 10px rgba(250,250,250,0.3)',
         }}
       />
+      <div
+        style={{
+          position: 'absolute',
+          top: '12px',
+          right: '32px',
+          fontSize: '9px',
+          color: 'var(--text-muted)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.2em',
+        }}
+        className="animate-luxury"
+      >
+        Synchronizing Data Stream — {Math.round(percentage)}%
+      </div>
     </div>
   );
 }

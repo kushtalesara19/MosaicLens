@@ -1,35 +1,39 @@
-export default function KPICard({ label, value, sub, accent, danger, loading, children }) {
-  let borderColor = 'var(--border)';
-  if (accent) borderColor = 'var(--accent-blue)';
-  if (danger) borderColor = '#ef4444'; // red
-
+export default function KPICard({ label, value, sub, loading, children }) {
   return (
     <div
-      className="card"
       style={{
-        padding: '24px',
-        borderTop: `2px solid ${borderColor}`,
+        padding: '0',
         display: 'flex',
         flexDirection: 'column',
-        gap: '8px',
+        gap: '4px',
+        border: 'none'
       }}
     >
-      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+      <div 
+        className="tracking-luxury"
+        style={{ 
+          fontSize: '10px', 
+          color: 'var(--text-muted)', 
+          fontWeight: 600, 
+          textTransform: 'uppercase' 
+        }}
+      >
         {label}
       </div>
       <div
         className="number-value"
         style={{
-          fontSize: '28px',
-          fontWeight: 700,
+          fontSize: '64px',
+          fontWeight: 200,
           color: 'var(--text-primary)',
-          opacity: loading ? 0.5 : 1,
-          transition: 'opacity 0.2s',
+          opacity: loading ? 0.3 : 1,
+          transition: 'opacity 0.5s ease',
+          lineHeight: '1.1',
         }}
       >
         {value}
       </div>
-      <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{sub}</div>
+      <div style={{ fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.02em' }}>{sub}</div>
       {children}
     </div>
   );

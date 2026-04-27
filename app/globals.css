@@ -3,15 +3,14 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #0a0f1e;
-  --bg-panel: #0d1526;
-  --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent-blue: #3b82f6;
-  --accent-cyan: #06b6d4;
-  --border: rgba(59, 130, 246, 0.2);
-  --border-hover: rgba(6, 182, 212, 0.4);
+  --bg-dark: #000000;
+  --bg-panel: #09090b; /* zinc-950 */
+  --text-primary: #fafafa; /* zinc-50 */
+  --text-secondary: #a1a1aa; /* zinc-400 */
+  --text-muted: #52525b; /* zinc-600 */
+  --accent-luxury: #d97706; /* muted burnt orange */
+  --border: #27272a; /* zinc-800 */
+  --border-hover: #3f3f46; /* zinc-700 */
 }
 
 body {
@@ -20,32 +19,38 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Base styles for a technical feel */
+/* Monolithic edges */
 * {
-  border-radius: 0 !important; /* Sharp edges everywhere */
+  border-radius: 0 !important;
   box-sizing: border-box;
 }
 
 .card {
-  background-color: var(--bg-panel);
-  border: 1px solid var(--border);
-  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  border-bottom: 1px solid var(--border);
+  transition: all 0.3s ease;
 }
 
-.card:hover {
-  border-color: var(--border-hover);
+.card-elevated {
+  background-color: var(--bg-panel);
 }
 
 .number-value {
-  font-family: 'Space Mono', monospace;
+  font-family: 'Inter', sans-serif;
+  letter-spacing: -0.05em;
 }
 
-/* Custom scrollbar */
+.tracking-luxury {
+  letter-spacing: 0.2em;
+}
+
+/* Custom minimal scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 4px;
+  height: 4px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-dark);
@@ -54,5 +59,14 @@ body {
   background: var(--border);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-blue);
+  background: var(--text-muted);
+}
+
+@keyframes elegantFade {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.animate-luxury {
+  animation: elegantFade 3s ease-in-out infinite;
 }

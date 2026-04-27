@@ -1,5 +1,4 @@
 'use client';
- 
 import { useState, useEffect } from 'react';
 import { fetchAllReviews } from '../lib/fetchReviews';
 import { computeMetrics, formatINR } from '../lib/computeMetrics';
@@ -13,162 +12,128 @@ import ResponseGap from '../components/ResponseGap';
  
 const TOTAL_REVIEWS = 5000;
  
-export default function Home() {
-  const [reviews, setReviews] = useState([]);
+export default function Dashboard() {
+  const [metrics, setMetrics] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [fetchedCount, setFetchedCount] = useState(0);
   const [isDone, setIsDone] = useState(false);
-  const [metrics, setMetrics] = useState(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
  
   useEffect(() => {
     fetchAllReviews(
       (allReviews, count) => {
-        setReviews(allReviews);
         setFetchedCount(count);
         if (allReviews.length > 0) {
           const m = computeMetrics(allReviews);
           setMetrics(m);
         }
       },
-      (allReviews) => {
+      () => {
         setIsDone(true);
-        const m = computeMetrics(allReviews);
-        setMetrics(m);
+        setLoading(false);
       }
     );
   }, []);
  
-  const loading = fetchedCount === 0;
- 
   return (
-    <div style={{ minHeight: '100vh', paddingTop: isDone ? '0' : '44px' }}>
-      {/* Progress Bar */}
+    <div style={{ minHeight: '100vh', background: 'var(--bg-dark)' }}>
       <ProgressBar fetched={fetchedCount} total={TOTAL_REVIEWS} done={isDone} />
- 
-      {/* Header */}
+
       <header
         style={{
-          padding: '24px 32px',
+          padding: '80px 60px',
           borderBottom: '1px solid var(--border)',
           display: 'flex',
           justifyContent: 'space-between',
-          alignItems: 'center',
-          background: 'rgba(7,13,26,0.8)',
-          backdropFilter: 'blur(12px)',
-          position: 'sticky',
-          top: isDone ? 0 : '44px',
-          zIndex: 50,
+          alignItems: 'flex-end',
+          background: 'var(--bg-dark)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {/* Logo mark */}
+        <div>
           <div
+            className="tracking-luxury"
             style={{
-              width: '32px',
-              height: '32px',
-              background: 'linear-gradient(135deg, var(--accent-blue), var(--accent-cyan))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '14px',
+              fontSize: '32px',
               fontWeight: 800,
-              color: '#fff',
-              flexShrink: 0,
+              color: 'var(--text-primary)',
+              textTransform: 'uppercase',
+              lineHeight: '1',
             }}
           >
-            ML
+            Mosaic Lens
           </div>
-          <div>
-            <div
-              style={{
-                fontSize: '18px',
-                fontWeight: 800,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Mosaic Lens
-            </div>
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', letterSpacing: '0.05em' }}>
-              CX INTELLIGENCE
-            </div>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.4em', marginTop: '16px' }}>
+            Architectural Synthesis · Data Gallery
           </div>
         </div>
- 
-        <div
-          style={{
-            fontSize: '11px',
-            color: 'var(--text-muted)',
-            textAlign: 'right',
-            letterSpacing: '0.05em',
-          }}
-        >
-          <div>Revenue-weighted complaint analysis</div>
-          <div style={{ color: 'var(--text-muted)', marginTop: '2px' }}>
+
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.2em' }}>
             {isDone ? (
-              <span style={{ color: '#10b981' }}>
-                ✓ {fetchedCount.toLocaleString('en-IN')} reviews analysed
+              <span style={{ color: 'var(--text-primary)' }}>
+                Archive Ready · {fetchedCount.toLocaleString('en-IN')} units analysed
               </span>
             ) : (
-              <span style={{ color: 'var(--accent-cyan)' }}>
-                Live — {fetchedCount.toLocaleString('en-IN')} / {TOTAL_REVIEWS.toLocaleString('en-IN')} reviews
+              <span className="animate-luxury">
+                Ingesting Stream · {fetchedCount.toLocaleString('en-IN')} / {TOTAL_REVIEWS.toLocaleString('en-IN')}
               </span>
             )}
           </div>
         </div>
       </header>
- 
-      {/* Main content */}
-      <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
- 
+
+      <main style={{ padding: '120px 60px', maxWidth: '1800px', margin: '0 auto' }}>
+        
         {/* KPI Strip */}
         <div
           className="kpi-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(4, 1fr)',
-            gap: '16px',
-            marginBottom: '24px',
+            gap: '100px',
+            marginBottom: '160px',
           }}
         >
           <KPICard
-            label="Reviews Analysed"
+            label="Synthesis Volume"
             value={fetchedCount.toLocaleString('en-IN')}
-            sub={isDone ? 'Full dataset loaded' : 'Loading more...'}
+            sub="Units processed"
+            loading={loading}
           />
           <KPICard
-            label="Total LTV at Risk"
+            label="Capital Risk"
             value={metrics ? formatINR(metrics.totalLTVAtRisk) : '—'}
-            sub="Repeat customers, rating ≤ 2"
-            accent
+            sub="Repeat equity exposure"
             loading={loading}
           >
-            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
-              Worst-case exposure: full LTV of repeat customers with rating ≤ 2
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '8px', fontStyle: 'italic', lineHeight: '1.4' }}>
+              Methodology: full LTV of repeat clientele with rating ≤ 2
             </div>
           </KPICard>
           <KPICard
-            label="Urgent — Last 30 Days"
+            label="Urgency Index"
             value={metrics ? formatINR(metrics.urgentChurnLTV) : '—'}
-            sub="Still in reorder window"
-            danger
+            sub="30-day window"
             loading={loading}
           />
           <KPICard
-            label="Response Gap"
+            label="Brand Silence"
             value={metrics ? `${metrics.responseGapPct}%` : '—'}
-            sub="High-value complaints ignored"
+            sub="Unresolved high-equity friction"
             loading={loading}
           />
         </div>
- 
+
         {/* Executive Summary */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '160px' }}>
           <ExecutiveSummary metrics={metrics} totalReviews={fetchedCount} />
         </div>
- 
+
         {/* Issue Priority Table */}
-        <div style={{ marginBottom: '24px' }}>
+        <div style={{ marginBottom: '160px' }}>
+          <div className="tracking-luxury" style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '48px' }}>
+            Friction Matrix
+          </div>
           {metrics && metrics.issueStats ? (
             <IssueTable
               issueStats={metrics.issueStats}
@@ -176,164 +141,127 @@ export default function Home() {
             />
           ) : (
             <div
-              className="card"
               style={{
-                padding: '48px',
-                textAlign: 'center',
+                padding: '100px 0',
+                textAlign: 'left',
                 color: 'var(--text-muted)',
-                fontSize: '14px',
+                fontSize: '11px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.3em'
               }}
+              className="animate-luxury"
             >
-              <div
-                style={{
-                  width: '32px',
-                  height: '32px',
-                  border: '2px solid var(--accent-blue)',
-                  borderTopColor: 'transparent',
-                  borderRadius: '50%',
-                  margin: '0 auto 16px',
-                  animation: 'spin 1s linear infinite',
-                }}
-              />
-              Building issue priority table...
+              Generating friction matrix...
             </div>
           )}
         </div>
- 
-        {/* Product + Platform charts */}
+
+        {/* Charts Section */}
         {metrics && (
-          <>
+          <div style={{ borderTop: '1px solid var(--border)', paddingTop: '80px' }}>
             <div
               className="charts-grid"
               style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
-                gap: '16px',
-                marginBottom: '24px',
+                gap: '120px',
+                marginBottom: '120px',
               }}
             >
               <ProductChart productBreakdown={metrics.productBreakdown} />
               <PlatformChart platformBreakdown={metrics.platformBreakdown} />
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '120px', borderTop: '1px solid var(--border)' }}>
               <TrendLineChart monthlyIssueTrend={metrics.monthlyIssueTrend} />
             </div>
 
-            <div style={{ marginBottom: '24px' }}>
-              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
-                Geographic Risk Concentration
-              </div>
+            <div style={{ marginBottom: '160px', borderTop: '1px solid var(--border)' }}>
               <CityRiskChart cityBreakdown={metrics.cityBreakdown} />
-            </div>
-          </>
-        )}
- 
-        {/* Co-occurrence insight */}
-        {metrics && metrics.topCoOccurrences && metrics.topCoOccurrences.length > 0 && (
-          <div style={{ marginBottom: '24px' }}>
-            <div className="card" style={{ padding: '20px', overflowX: 'auto' }}>
-              <div
-                style={{
-                  fontSize: '14px',
-                  fontWeight: 700,
-                  color: 'var(--text-primary)',
-                  marginBottom: '4px',
-                  minWidth: '350px'
-                }}
-              >
-                Issue Co-occurrence — Systemic Patterns
-              </div>
-              <div
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--text-secondary)',
-                  marginBottom: '16px',
-                  minWidth: '350px'
-                }}
-              >
-                Issues that appear together in the same review reveal process failures, not isolated incidents
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '350px' }}>
-                {metrics.topCoOccurrences.map((pair) => (
-                  <div
-                    key={`${pair.issueA}|${pair.issueB}`}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '12px',
-                      padding: '10px 14px',
-                      background: 'rgba(59,130,246,0.04)',
-                      border: '1px solid var(--border)',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontFamily: 'Space Mono, monospace',
-                        fontSize: '20px',
-                        fontWeight: 700,
-                        color: 'var(--accent-blue)',
-                        minWidth: '40px',
-                      }}
-                    >
-                      {pair.count}
-                    </span>
-                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
-                      reviews mention both{' '}
-                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelA}</strong> and{' '}
-                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelB}</strong> —
-                      likely one systemic failure with two symptoms
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         )}
- 
+
+        {/* Co-occurrence insight */}
+        {metrics && metrics.topCoOccurrences && metrics.topCoOccurrences.length > 0 && (
+          <div style={{ marginBottom: '160px', borderTop: '1px solid var(--border)', paddingTop: '100px' }}>
+            <div className="tracking-luxury" style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '60px' }}>
+              Structural Resonance
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '80px' }}>
+              {metrics.topCoOccurrences.map((pair) => (
+                <div
+                  key={`${pair.issueA}|${pair.issueB}`}
+                  style={{
+                    padding: '40px',
+                    borderLeft: '1px solid var(--border)',
+                    transition: 'border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1)'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--text-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border)'}
+                >
+                  <div
+                    className="number-value"
+                    style={{
+                      fontSize: '48px',
+                      fontWeight: 200,
+                      color: 'var(--accent-luxury)',
+                      marginBottom: '24px',
+                      lineHeight: '1'
+                    }}
+                  >
+                    {pair.count}
+                  </div>
+                  <div style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.8, fontWeight: 300 }}>
+                    Concurrent mentions of <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{pair.labelA}</span> & <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{pair.labelB}</span> indicate a deeper structural process failure rather than isolated symptoms.
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Response Gap */}
         {metrics && (
-          <div style={{ marginBottom: '32px' }}>
+          <div style={{ marginBottom: '160px', borderTop: '1px solid var(--border)', paddingTop: '100px' }}>
             <ResponseGap metrics={metrics} />
           </div>
         )}
- 
+
         {/* Footer */}
-        <div
+        <footer
           style={{
             borderTop: '1px solid var(--border)',
-            paddingTop: '24px',
+            padding: '100px 0 60px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
           }}
         >
-          <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            Mosaic Lens · CX Intelligence Dashboard
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.3em' }}>
+            Mosaic Lens · Architectural Intelligence
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'Space Mono, monospace' }}>
-            Data: mosaicfellowship.in/api · {new Date().getFullYear()}
+          <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+            {new Date().getFullYear()} · Design Systems
           </div>
-        </div>
+        </footer>
       </main>
- 
-      {/* Detail Panel */}
+
       <DetailPanel
         issue={selectedIssue}
         coOccurrences={metrics?.topCoOccurrences}
         onClose={() => setSelectedIssue(null)}
       />
- 
+
       <style>{`
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-        @media (max-width: 900px) {
-          .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .charts-grid { grid-template-columns: 1fr !important; }
+        @media (max-width: 1200px) {
+          .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 60px !important; }
+          .charts-grid { grid-template-columns: 1fr !important; gap: 80px !important; }
         }
         @media (max-width: 600px) {
           .kpi-grid { grid-template-columns: 1fr !important; }
+          main { padding: 60px 24px !important; }
+          header { padding: 60px 24px !important; }
         }
       `}</style>
     </div>
