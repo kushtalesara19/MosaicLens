@@ -3,14 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #000000;
-  --bg-panel: #09090b; /* zinc-950 */
-  --text-primary: #fafafa; /* zinc-50 */
-  --text-secondary: #a1a1aa; /* zinc-400 */
-  --text-muted: #52525b; /* zinc-600 */
-  --accent-luxury: #d97706; /* muted burnt orange */
-  --border: #27272a; /* zinc-800 */
-  --border-hover: #3f3f46; /* zinc-700 */
+  --bg-dark: #0a0f1e;
+  --bg-panel: #0d1526;
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-blue: #3b82f6;
+  --accent-cyan: #06b6d4;
+  --border: rgba(59, 130, 246, 0.2);
+  --border-hover: rgba(6, 182, 212, 0.4);
 }
 
 body {
@@ -19,38 +20,32 @@ body {
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
-  -webkit-font-smoothing: antialiased;
 }
 
-/* Monolithic edges */
+/* Base styles for a technical feel */
 * {
-  border-radius: 0 !important;
+  border-radius: 0 !important; /* Sharp edges everywhere */
   box-sizing: border-box;
 }
 
 .card {
-  background-color: transparent;
-  border-bottom: 1px solid var(--border);
-  transition: all 0.3s ease;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease-in-out;
 }
 
-.card-elevated {
-  background-color: var(--bg-panel);
+.card:hover {
+  border-color: var(--border-hover);
 }
 
 .number-value {
-  font-family: 'Inter', sans-serif;
-  letter-spacing: -0.05em;
+  font-family: 'Space Mono', monospace;
 }
 
-.tracking-luxury {
-  letter-spacing: 0.2em;
-}
-
-/* Custom minimal scrollbar */
+/* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: var(--bg-dark);
@@ -59,14 +54,9 @@ body {
   background: var(--border);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  background: var(--accent-blue);
 }
 
-@keyframes elegantFade {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.animate-luxury {
-  animation: elegantFade 3s ease-in-out infinite;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

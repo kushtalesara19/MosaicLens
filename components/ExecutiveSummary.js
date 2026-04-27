@@ -21,32 +21,23 @@ export default function ExecutiveSummary({ metrics, totalReviews }) {
 
   return (
     <div
+      className="card"
       style={{
-        padding: '40px',
-        borderLeft: '1px solid var(--text-primary)',
-        lineHeight: 1.8,
-        backgroundColor: 'var(--bg-panel)',
+        padding: '24px',
+        borderLeft: '3px solid var(--accent-cyan)',
+        lineHeight: 1.6,
       }}
     >
-      <div 
-        className="tracking-luxury"
-        style={{ 
-          fontSize: '10px', 
-          color: 'var(--text-muted)', 
-          fontWeight: 700, 
-          marginBottom: '16px', 
-          textTransform: 'uppercase' 
-        }}
-      >
-        Executive Intelligence
+      <div style={{ fontSize: '12px', color: 'var(--accent-cyan)', fontWeight: 700, marginBottom: '8px', letterSpacing: '0.05em' }}>
+        EXECUTIVE SUMMARY
       </div>
-      <p style={{ fontSize: '18px', fontWeight: 300, color: 'var(--text-primary)', margin: 0, maxWidth: '800px' }}>
-        Mosaic Lens has synthesized <span className="number-value" style={{ fontWeight: 500 }}>{totalReviews.toLocaleString('en-IN')}</span> customer interactions. 
-        The primary revenue friction is <span style={{ color: 'var(--accent-luxury)', fontWeight: 500 }}>{topIssue.name.toLowerCase()}</span>, 
-        prevalent within <strong>{topPlatform}</strong> and <strong>{topProduct}</strong>. 
-        <span className="number-value" style={{ fontWeight: 500 }}>{formatINR(metrics.urgentChurnLTV)}</span> remains exposed 
-        amongst repeat clientele within the critical 30-day reacquisition window. 
-        Brand silence persists for <span className="number-value" style={{ fontWeight: 500 }}>{metrics.responseGapPct}%</span> of high-equity complaints.
+      <p style={{ fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>
+        Mosaic Lens has analysed <strong className="number-value">{totalReviews.toLocaleString('en-IN')}</strong> reviews. 
+        The most financially damaging issue is <strong style={{ color: '#ef4444' }}>{topIssue.name.toLowerCase()}</strong>, 
+        concentrated on <strong>{topPlatform}</strong> and <strong>{topProduct}</strong>. 
+        <strong className="number-value" style={{ color: '#ef4444' }}> {formatINR(metrics.urgentChurnLTV)}</strong> is at risk 
+        from repeat customers who complained in the last 30 days and are still in the reorder window. 
+        <strong className="number-value"> {metrics.responseGapPct}%</strong> of high-value complaints received no brand response.
       </p>
     </div>
   );
