@@ -46,7 +46,7 @@ export default function Dashboard() {
   const products = useMemo(() => ['All', ...new Set(allReviews.map(r => r.product))].filter(Boolean), [allReviews]);
 
   // Derived Metrics based on Filters
-  const metrics = useMemo(() => {
+  const filteredReviews = useMemo(() => {
     let filtered = allReviews;
     if (filters.platform !== 'All') {
       filtered = filtered.filter(r => r.platform === filters.platform);
@@ -54,8 +54,11 @@ export default function Dashboard() {
     if (filters.product !== 'All') {
       filtered = filtered.filter(r => r.product === filters.product);
     }
-    return computeMetrics(filtered);
+    return filtered;
   }, [allReviews, filters]);
+
+  const metrics = useMemo(() => computeMetrics(filteredReviews), [filteredReviews]);
+  const filteredCount = filteredReviews.length;
 
   const handleExport = () => {
     if (!metrics || !metrics.issueStats) return;
@@ -219,7 +222,7 @@ export default function Dashboard() {
         >
           <KPICard
             label="Filtered Segment"
-            value={(metrics?.issueStats?.reduce((acc, s) => acc + s.complaint_count, 0) || 0).toLocaleString('en-IN')}
+            value={filteredCount.toLocaleString('en-IN')}
             sub="Total relevant reviews"
           />
           <KPICard
