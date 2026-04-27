@@ -8,7 +8,7 @@ import ExecutiveSummary from '../components/ExecutiveSummary';
 import ProgressBar from '../components/ProgressBar';
 import IssueTable from '../components/IssueTable';
 import DetailPanel from '../components/DetailPanel';
-import { ProductChart, PlatformChart } from '../components/Charts';
+import { ProductChart, PlatformChart, CityRiskChart, TrendLineChart } from '../components/Charts';
 import ResponseGap from '../components/ResponseGap';
  
 const TOTAL_REVIEWS = 5000;
@@ -142,7 +142,11 @@ export default function Home() {
             sub="Repeat customers, rating ≤ 2"
             accent
             loading={loading}
-          />
+          >
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '4px', fontStyle: 'italic' }}>
+              Worst-case exposure: full LTV of repeat customers with rating ≤ 2
+            </div>
+          </KPICard>
           <KPICard
             label="Urgent — Last 30 Days"
             value={metrics ? formatINR(metrics.urgentChurnLTV) : '—'}
@@ -198,30 +202,44 @@ export default function Home() {
  
         {/* Product + Platform charts */}
         {metrics && (
-          <div
-            className="charts-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 1fr',
-              gap: '16px',
-              marginBottom: '24px',
-            }}
-          >
-            <ProductChart productBreakdown={metrics.productBreakdown} />
-            <PlatformChart platformBreakdown={metrics.platformBreakdown} />
-          </div>
+          <>
+            <div
+              className="charts-grid"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: '16px',
+                marginBottom: '24px',
+              }}
+            >
+              <ProductChart productBreakdown={metrics.productBreakdown} />
+              <PlatformChart platformBreakdown={metrics.platformBreakdown} />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <TrendLineChart monthlyIssueTrend={metrics.monthlyIssueTrend} />
+            </div>
+
+            <div style={{ marginBottom: '24px' }}>
+              <div style={{ fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '16px' }}>
+                Geographic Risk Concentration
+              </div>
+              <CityRiskChart cityBreakdown={metrics.cityBreakdown} />
+            </div>
+          </>
         )}
  
         {/* Co-occurrence insight */}
         {metrics && metrics.topCoOccurrences && metrics.topCoOccurrences.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
-            <div className="card" style={{ padding: '20px' }}>
+            <div className="card" style={{ padding: '20px', overflowX: 'auto' }}>
               <div
                 style={{
                   fontSize: '14px',
                   fontWeight: 700,
                   color: 'var(--text-primary)',
                   marginBottom: '4px',
+                  minWidth: '350px'
                 }}
               >
                 Issue Co-occurrence — Systemic Patterns
@@ -231,11 +249,12 @@ export default function Home() {
                   fontSize: '12px',
                   color: 'var(--text-secondary)',
                   marginBottom: '16px',
+                  minWidth: '350px'
                 }}
               >
                 Issues that appear together in the same review reveal process failures, not isolated incidents
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '350px' }}>
                 {metrics.topCoOccurrences.map((pair) => (
                   <div
                     key={`${pair.issueA}|${pair.issueB}`}

@@ -1,4 +1,4 @@
-export default function KPICard({ label, value, sub, accent, danger, loading }) {
+export default function KPICard({ label, value, sub, accent, danger, loading, children }) {
   let borderColor = 'var(--border)';
   if (accent) borderColor = 'var(--accent-blue)';
   if (danger) borderColor = '#ef4444'; // red
@@ -30,6 +30,7 @@ export default function KPICard({ label, value, sub, accent, danger, loading }) 
         {value}
       </div>
       <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{sub}</div>
+      {children}
     </div>
   );
 }

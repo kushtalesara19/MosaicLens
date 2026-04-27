@@ -50,7 +50,7 @@ export default function IssueTable({ issueStats, onRowClick }) {
 
   return (
     <div className="card" style={{ overflowX: 'auto' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
+      <table style={{ width: '100%', minWidth: '800px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
         <thead>
           <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(59,130,246,0.05)' }}>
             {[
