@@ -43,7 +43,13 @@ export function ProductChart({ productBreakdown }) {
               width={120}
               tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
             />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+              isAnimationActive={false}
+              offset={10}
+              position={{ x: 130 }}
+            />
             <Bar dataKey="ltv" name="LTV at Risk" radius={[0, 4, 4, 0]}>
               {productBreakdown.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill="var(--accent-blue)" />
@@ -72,7 +78,12 @@ export function PlatformChart({ platformBreakdown }) {
               tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
             />
             <YAxis type="number" hide />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+              isAnimationActive={false}
+              offset={10}
+            />
             <Bar dataKey="ltv" name="LTV at Risk" radius={[4, 4, 0, 0]}>
               {platformBreakdown.map((entry, index) => (
                 <Cell 
@@ -112,7 +123,12 @@ export function CityRiskChart({ cityBreakdown }) {
               tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
             />
             <YAxis type="number" hide />
-            <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
+            <Tooltip 
+              content={<CustomTooltip />} 
+              cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+              isAnimationActive={false}
+              offset={10}
+            />
             <Bar dataKey="ltvAtRisk" name="LTV at Risk" radius={[4, 4, 0, 0]}>
               {cityBreakdown.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill="var(--accent-cyan)" />
@@ -143,7 +159,10 @@ export function TrendLineChart({ monthlyIssueTrend }) {
             />
             <YAxis yAxisId="left" orientation="left" stroke="var(--accent-blue)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
             <YAxis yAxisId="right" orientation="right" stroke="var(--accent-cyan)" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-            <Tooltip content={<CustomTooltip />} />
+            <Tooltip 
+              content={<CustomTooltip />}
+              isAnimationActive={false}
+            />
             <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '20px' }} />
             <Line 
               yAxisId="left"

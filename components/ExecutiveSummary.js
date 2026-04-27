@@ -9,36 +9,41 @@ export default function ExecutiveSummary({ metrics, totalReviews }) {
     );
   }
 
-  // Determine top issue by LTV at risk
   const sortedIssues = [...metrics.issueStats].sort((a, b) => b.total_ltv_at_risk - a.total_ltv_at_risk);
   const topIssue = sortedIssues[0];
-
-  // Top platform for that issue
   const topPlatform = topIssue.platform_stats[0]?.platform || 'unknown platform';
-
-  // For product, we just use the overall top product for simplicity in this summary
   const topProduct = metrics.productBreakdown[0]?.product || 'unknown product';
 
   return (
-    <div
-      className="card"
-      style={{
-        padding: '24px',
-        borderLeft: '3px solid var(--accent-cyan)',
-        lineHeight: 1.6,
-      }}
-    >
-      <div style={{ fontSize: '12px', color: 'var(--accent-cyan)', fontWeight: 700, marginBottom: '8px', letterSpacing: '0.05em' }}>
-        EXECUTIVE SUMMARY
+    <div className="card" style={{ padding: '24px', borderLeft: '4px solid var(--accent-blue)', background: 'var(--bg-panel)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+        
+        {/* Risk Column */}
+        <div>
+          <div style={{ fontSize: '11px', color: 'var(--accent-blue)', fontWeight: 700, marginBottom: '12px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            Operational Risk Intelligence
+          </div>
+          <div style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+            Analysis of <strong className="number-value">{totalReviews.toLocaleString('en-IN')}</strong> customer touchpoints identifies 
+            <strong style={{ color: '#ef4444' }}> {topIssue.name}</strong> as the primary driver of financial friction, 
+            accounting for <strong className="number-value">{formatINR(topIssue.total_ltv_at_risk)}</strong> in potential churn. 
+            The friction is most acute on <strong>{topPlatform}</strong>.
+          </div>
+        </div>
+
+        {/* Action Column */}
+        <div style={{ borderLeft: '1px solid var(--border)', paddingLeft: '32px' }}>
+          <div style={{ fontSize: '11px', color: '#ef4444', fontWeight: 700, marginBottom: '12px', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            Critical Recovery Window
+          </div>
+          <div style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            There is a <strong className="number-value" style={{ color: '#ef4444' }}>{formatINR(metrics.urgentChurnLTV)}</strong> recovery opportunity in the next 30 days. 
+            These are repeat customers who are currently within their reorder window but have unresolved high-friction experiences.
+            Current response gap: <strong className="number-value" style={{ color: 'var(--text-primary)' }}>{metrics.responseGapPct}%</strong>.
+          </div>
+        </div>
+
       </div>
-      <p style={{ fontSize: '15px', color: 'var(--text-primary)', margin: 0 }}>
-        Mosaic Lens has analysed <strong className="number-value">{totalReviews.toLocaleString('en-IN')}</strong> reviews. 
-        The most financially damaging issue is <strong style={{ color: '#ef4444' }}>{topIssue.name.toLowerCase()}</strong>, 
-        concentrated on <strong>{topPlatform}</strong> and <strong>{topProduct}</strong>. 
-        <strong className="number-value" style={{ color: '#ef4444' }}> {formatINR(metrics.urgentChurnLTV)}</strong> is at risk 
-        from repeat customers who complained in the last 30 days and are still in the reorder window. 
-        <strong className="number-value"> {metrics.responseGapPct}%</strong> of high-value complaints received no brand response.
-      </p>
     </div>
   );
 }

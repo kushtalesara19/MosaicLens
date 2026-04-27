@@ -309,7 +309,7 @@ export default function Dashboard() {
             Mosaic Lens · CX Intelligence Dashboard
           </div>
           <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'Space Mono, monospace' }}>
-            {new Date().getFullYear()} · Final Submission
+            {new Date().getFullYear()} · Mosaic Analytics
           </div>
         </div>
       </main>
