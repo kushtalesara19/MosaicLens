@@ -7,8 +7,8 @@ import { formatINR } from '../lib/computeMetrics';
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="card" style={{ padding: '12px', background: 'rgba(13,21,38,0.95)', border: '1px solid var(--border)' }}>
-        <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600 }}>{label}</p>
+      <div className="card" style={{ padding: '12px', background: 'rgba(255, 255, 255, 0.98)', border: '1px solid var(--border)', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+        <p style={{ margin: '0 0 8px', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>{label}</p>
         {payload.map((entry, idx) => (
           <p key={idx} style={{ margin: '4px 0', fontSize: '14px', color: entry.color || '#ef4444', fontFamily: 'Space Mono, monospace' }}>
             {entry.name}: {entry.name.includes('LTV') ? formatINR(entry.value) : entry.value}

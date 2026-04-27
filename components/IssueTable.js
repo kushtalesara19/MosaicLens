@@ -52,7 +52,7 @@ export default function IssueTable({ issueStats, onRowClick }) {
     <div className="card" style={{ overflowX: 'auto' }}>
       <table style={{ width: '100%', minWidth: '800px', borderCollapse: 'collapse', textAlign: 'left', fontSize: '13px' }}>
         <thead>
-          <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(59,130,246,0.05)' }}>
+          <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(15, 23, 42, 0.03)' }}>
             {[
               { id: 'name', label: 'Issue' },
               { id: 'complaint_count', label: 'Complaints' },

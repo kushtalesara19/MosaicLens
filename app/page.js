@@ -48,8 +48,8 @@ export default function Dashboard() {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          background: 'rgba(7,13,26,0.8)',
-          backdropFilter: 'blur(12px)',
+          background: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(16px)',
           position: 'sticky',
           top: isDone ? 0 : '44px',
           zIndex: 50,
@@ -173,8 +173,7 @@ export default function Dashboard() {
             <div
               className="card"
               style={{
-                padding: '48px',
-                textAlign: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.02)',
                 color: 'var(--text-muted)',
                 fontSize: '14px',
               }}
@@ -258,7 +257,7 @@ export default function Dashboard() {
                       alignItems: 'center',
                       gap: '12px',
                       padding: '10px 14px',
-                      background: 'rgba(59,130,246,0.04)',
+                      background: 'rgba(37, 99, 235, 0.03)',
                       border: '1px solid var(--border)',
                     }}
                   >

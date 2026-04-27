@@ -35,7 +35,7 @@ export default function ResponseGap({ metrics }) {
         </thead>
         <tbody>
           {metrics.responseGapByPlatform?.map((row) => (
-            <tr key={row.platform} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+            <tr key={row.platform} style={{ borderBottom: '1px solid rgba(0,0,0,0.05)' }}>
               <td style={{ padding: '12px 16px', color: 'var(--text-primary)', fontWeight: 600 }}>{row.platform}</td>
               <td style={{ padding: '12px 16px' }} className="number-value">{row.complaints}</td>
               <td style={{ padding: '12px 16px' }} className="number-value">{row.responses}</td>

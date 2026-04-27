@@ -23,7 +23,7 @@ export default function DetailPanel({ issue, coOccurrences, onClose }) {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundColor: 'rgba(10,15,30,0.8)',
+          backgroundColor: 'rgba(15, 23, 42, 0.4)',
           backdropFilter: 'blur(4px)',
           zIndex: 100,
         }}
