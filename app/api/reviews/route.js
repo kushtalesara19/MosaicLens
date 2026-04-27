@@ -5,7 +5,7 @@ export async function GET(request) {
 
   const res = await fetch(
     `https://mosaicfellowship.in/api/data/cx/reviews?page=${page}&limit=${limit}`,
-    { next: { revalidate: 0 } }
+    { cache: 'no-store' }
   );
 
   if (!res.ok) {
@@ -15,6 +15,9 @@ export async function GET(request) {
   const data = await res.json();
   return new Response(JSON.stringify(data), {
     status: 200,
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+    },
   });
 }

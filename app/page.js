@@ -1,6 +1,6 @@
 'use client';
  
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchAllReviews } from '../lib/fetchReviews';
 import { computeMetrics, formatINR } from '../lib/computeMetrics';
 import KPICard from '../components/KPICard';
@@ -20,23 +20,23 @@ export default function Home() {
   const [metrics, setMetrics] = useState(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
  
-  // Recompute metrics whenever reviews update
-  const handleBatchComplete = useCallback((allReviews, count) => {
-    setReviews(allReviews);
-    setFetchedCount(count);
-    const m = computeMetrics(allReviews);
-    setMetrics(m);
-  }, []);
- 
-  const handleComplete = useCallback((allReviews) => {
-    setIsDone(true);
-    const m = computeMetrics(allReviews);
-    setMetrics(m);
-  }, []);
- 
   useEffect(() => {
-    fetchAllReviews(handleBatchComplete, handleComplete);
-  }, [handleBatchComplete, handleComplete]);
+    fetchAllReviews(
+      (allReviews, count) => {
+        setReviews(allReviews);
+        setFetchedCount(count);
+        if (allReviews.length > 0) {
+          const m = computeMetrics(allReviews);
+          setMetrics(m);
+        }
+      },
+      (allReviews) => {
+        setIsDone(true);
+        const m = computeMetrics(allReviews);
+        setMetrics(m);
+      }
+    );
+  }, []);
  
   const loading = fetchedCount === 0;
  
