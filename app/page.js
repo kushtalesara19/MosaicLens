@@ -25,6 +25,7 @@ export default function Dashboard() {
   const [filters, setFilters] = useState({
     platform: 'All',
     product: 'All',
+    rating: 'All',
   });
  
   useEffect(() => {
@@ -54,6 +55,9 @@ export default function Dashboard() {
     if (filters.product !== 'All') {
       filtered = filtered.filter(r => r.product === filters.product);
     }
+    if (filters.rating !== 'All') {
+      filtered = filtered.filter(r => Number(r.rating) === Number(filters.rating));
+    }
     return filtered;
   }, [allReviews, filters]);
 
@@ -73,6 +77,8 @@ export default function Dashboard() {
     }));
     downloadCSV(exportData, `mosaic_lens_report_${new Date().toISOString().split('T')[0]}.csv`);
   };
+
+  const isFiltered = filters.platform !== 'All' || filters.product !== 'All' || filters.rating !== 'All';
  
   return (
     <div style={{ minHeight: '100vh', paddingTop: isDone ? '0' : '44px' }}>
@@ -113,7 +119,6 @@ export default function Dashboard() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-           {/* Export Button */}
            {isDone && (
             <button
               onClick={handleExport}
@@ -156,6 +161,7 @@ export default function Dashboard() {
             display: 'flex', 
             gap: '32px', 
             alignItems: 'center',
+            flexWrap: 'wrap',
             background: 'var(--bg-panel)'
           }}
         >
@@ -200,9 +206,33 @@ export default function Dashboard() {
             </select>
           </div>
 
-          {(filters.platform !== 'All' || filters.product !== 'All') && (
+          {/* Rating Filter */}
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Rating:</label>
+            <select 
+              value={filters.rating}
+              onChange={(e) => setFilters(prev => ({ ...prev, rating: e.target.value }))}
+              style={{
+                background: 'transparent',
+                border: '1px solid var(--border)',
+                color: 'var(--text-primary)',
+                padding: '4px 8px',
+                fontSize: '12px',
+                outline: 'none'
+              }}
+            >
+              <option value="All">All</option>
+              <option value="1">★ 1</option>
+              <option value="2">★ 2</option>
+              <option value="3">★ 3</option>
+              <option value="4">★ 4</option>
+              <option value="5">★ 5</option>
+            </select>
+          </div>
+
+          {isFiltered && (
             <button 
-              onClick={() => setFilters({ platform: 'All', product: 'All' })}
+              onClick={() => setFilters({ platform: 'All', product: 'All', rating: 'All' })}
               style={{ fontSize: '11px', color: 'var(--accent-blue)', background: 'transparent', border: 'none', cursor: 'pointer', padding: 0 }}
             >
               Reset Filters
@@ -223,14 +253,17 @@ export default function Dashboard() {
           <KPICard
             label="Filtered Segment"
             value={filteredCount.toLocaleString('en-IN')}
-            sub="Total relevant reviews"
+            sub={isFiltered ? 'Filtered subset' : 'Full dataset'}
+            info="Total number of customer reviews matching your current filter selection."
           />
           <KPICard
             label="Total LTV at Risk"
             value={metrics ? formatINR(metrics.totalLTVAtRisk) : '—'}
             sub="Repeat customers, rating ≤ 2"
             accent
+            hero
             loading={loading}
+            info="Sum of Lifetime Value (LTV) for all repeat customers who gave a rating of 1 or 2. This represents worst-case revenue exposure."
           />
           <KPICard
             label="Urgent — Last 30 Days"
@@ -238,12 +271,14 @@ export default function Dashboard() {
             sub="Friction in reorder window"
             danger
             loading={loading}
+            info="LTV at risk from repeat customers who complained within the last 30 days. These customers are still in their reorder window and can potentially be saved."
           />
           <KPICard
             label="Response Gap"
             value={metrics ? `${metrics.responseGapPct}%` : '—'}
             sub="Silence on high-value friction"
             loading={loading}
+            info="Percentage of angry repeat customers (LTV > ₹10,000, rating ≤ 2) who received zero response from the brand."
           />
         </div>
 
@@ -294,6 +329,87 @@ export default function Dashboard() {
             </div>
           </>
         )}
+
+        {/* Co-occurrence Insight */}
+        {metrics && metrics.topCoOccurrences && metrics.topCoOccurrences.length > 0 && (
+          <div style={{ marginBottom: '24px' }}>
+            <div className="card" style={{ padding: '20px', overflowX: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', minWidth: '350px' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                  Issue Co-occurrence — Systemic Patterns
+                </div>
+                <span className="info-icon">
+                  ?
+                  <span className="info-tooltip">When two issues appear together in the same review above a threshold of 10 times, it suggests a single root cause producing two symptoms.</span>
+                </span>
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '16px', minWidth: '350px' }}>
+                Issues that appear together in the same review reveal process failures, not isolated incidents
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '350px' }}>
+                {metrics.topCoOccurrences.map((pair) => (
+                  <div
+                    key={`${pair.issueA}|${pair.issueB}`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      padding: '10px 14px',
+                      background: 'rgba(37, 99, 235, 0.03)',
+                      border: '1px solid var(--border)',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontFamily: 'Space Mono, monospace',
+                        fontSize: '20px',
+                        fontWeight: 700,
+                        color: 'var(--accent-blue)',
+                        minWidth: '40px',
+                      }}
+                    >
+                      {pair.count}
+                    </span>
+                    <div style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
+                      reviews mention both{' '}
+                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelA}</strong> and{' '}
+                      <strong style={{ color: 'var(--text-primary)' }}>{pair.labelB}</strong> —
+                      likely one systemic failure with two symptoms
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Response Gap */}
+        {metrics && (
+          <div style={{ marginBottom: '32px' }}>
+            <ResponseGap metrics={metrics} />
+          </div>
+        )}
+
+        {/* Methodology */}
+        <div className="card" style={{ padding: '20px', marginBottom: '32px', background: 'rgba(37, 99, 235, 0.02)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+            Methodology
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>LTV at Risk</strong> — Full Lifetime Value of repeat customers (is_repeat_customer = 1) who gave a rating ≤ 2. Represents worst-case churn exposure.
+            </div>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>Urgent Churn</strong> — Subset of LTV at Risk where the complaint was filed within the last 30 days (days_since_purchase ≤ 30). These customers are still in the reorder window.
+            </div>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>Response Gap</strong> — Percentage of high-value angry customers (LTV &gt; ₹10,000, rating ≤ 2, repeat) who received no brand response (response_from_brand = 0).
+            </div>
+            <div>
+              <strong style={{ color: 'var(--text-primary)' }}>Co-occurrence</strong> — Issue pairs appearing together in the same review ≥ 10 times, suggesting a shared root cause rather than independent failures.
+            </div>
+          </div>
+        </div>
 
         {/* Footer */}
         <div

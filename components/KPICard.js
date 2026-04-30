@@ -1,11 +1,11 @@
-export default function KPICard({ label, value, sub, accent, danger, loading, children }) {
+export default function KPICard({ label, value, sub, accent, danger, loading, hero, info, children }) {
   let borderColor = 'var(--border)';
   if (accent) borderColor = 'var(--accent-blue)';
-  if (danger) borderColor = '#ef4444'; // red
+  if (danger) borderColor = '#ef4444';
 
   return (
     <div
-      className="card"
+      className={`card ${hero ? 'hero-kpi' : ''}`}
       style={{
         padding: '24px',
         borderTop: `2px solid ${borderColor}`,
@@ -14,8 +14,14 @@ export default function KPICard({ label, value, sub, accent, danger, loading, ch
         gap: '8px',
       }}
     >
-      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+      <div style={{ fontSize: '13px', color: 'var(--text-secondary)', fontWeight: 600, display: 'flex', alignItems: 'center' }}>
         {label}
+        {info && (
+          <span className="info-icon">
+            ?
+            <span className="info-tooltip">{info}</span>
+          </span>
+        )}
       </div>
       <div
         className="number-value"
