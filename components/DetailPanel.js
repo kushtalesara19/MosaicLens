@@ -88,6 +88,49 @@ export default function DetailPanel({ issue, coOccurrences, onClose }) {
             </div>
           )}
 
+          {/* Major Recurring Problems faced by Repeated High LTV Consumers */}
+          <div style={{ marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+              Top 5 Recurring Problems Faced by Repeated High LTV Customers
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              {issue.high_ltv_problems?.map((prob, idx) => (
+                <div 
+                  key={prob.id || idx}
+                  className="card"
+                  style={{
+                    padding: '12px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    background: 'rgba(239, 68, 68, 0.02)',
+                    borderLeft: '3px solid var(--accent-blue)',
+                    fontSize: '13px'
+                  }}
+                >
+                  <div>
+                    <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {idx + 1}. {prob.name}
+                    </span>
+                  </div>
+                  <div style={{ textAlign: 'right' }}>
+                    <div className="number-value" style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {prob.count} occurrences
+                    </div>
+                    {prob.ltv > 0 && (
+                      <div className="number-value" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                        At risk: {formatINR(prob.ltv)}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {(!issue.high_ltv_problems || issue.high_ltv_problems.length === 0) && (
+                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>No recurring issues detected.</div>
+              )}
+            </div>
+          </div>
+
           {/* Platform Accountability Table */}
           <h3 style={{ fontSize: '14px', color: 'var(--text-secondary)', marginBottom: '12px' }}>Platform Accountability</h3>
           <table style={{ width: '100%', fontSize: '12px', marginBottom: '32px', borderCollapse: 'collapse' }}>

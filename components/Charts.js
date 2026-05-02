@@ -1,6 +1,6 @@
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, 
-  LineChart, Line, CartesianGrid, Legend 
+  LineChart, Line, CartesianGrid, Legend, LabelList
 } from 'recharts';
 import { formatINR } from '../lib/computeMetrics';
 
@@ -33,7 +33,7 @@ export function ProductChart({ productBreakdown }) {
       </div>
       <div style={{ height: '300px', width: '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={productBreakdown} layout="vertical" margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
+          <BarChart data={productBreakdown} layout="vertical" margin={{ top: 0, right: 80, left: 0, bottom: 0 }}>
             <XAxis type="number" hide />
             <YAxis 
               dataKey="product" 
@@ -54,6 +54,12 @@ export function ProductChart({ productBreakdown }) {
               {productBreakdown.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill="var(--accent-blue)" />
               ))}
+              <LabelList 
+                dataKey="ltv" 
+                position="right" 
+                formatter={(val) => formatINR(val)} 
+                style={{ fill: 'var(--text-primary)', fontSize: '11px', fontWeight: 600 }} 
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -70,7 +76,7 @@ export function PlatformChart({ platformBreakdown }) {
       </div>
       <div style={{ height: '300px', width: '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={platformBreakdown} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <BarChart data={platformBreakdown} margin={{ top: 30, right: 0, left: 0, bottom: 0 }}>
             <XAxis 
               dataKey="platform" 
               axisLine={false} 
@@ -91,6 +97,12 @@ export function PlatformChart({ platformBreakdown }) {
                   fill={entry.ownership === 'Mosaic owns this' ? 'var(--accent-blue)' : '#f59e0b'} 
                 />
               ))}
+              <LabelList 
+                dataKey="ltv" 
+                position="top" 
+                formatter={(val) => formatINR(val)} 
+                style={{ fill: 'var(--text-primary)', fontSize: '11px', fontWeight: 600 }} 
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -115,7 +127,7 @@ export function CityRiskChart({ cityBreakdown }) {
       </div>
       <div style={{ height: '300px', width: '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={cityBreakdown} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+          <BarChart data={cityBreakdown} margin={{ top: 30, right: 0, left: 0, bottom: 0 }}>
             <XAxis 
               dataKey="city" 
               axisLine={false} 
@@ -133,6 +145,12 @@ export function CityRiskChart({ cityBreakdown }) {
               {cityBreakdown.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill="var(--accent-cyan)" />
               ))}
+              <LabelList 
+                dataKey="ltvAtRisk" 
+                position="top" 
+                formatter={(val) => formatINR(val)} 
+                style={{ fill: 'var(--text-primary)', fontSize: '11px', fontWeight: 600 }} 
+              />
             </Bar>
           </BarChart>
         </ResponsiveContainer>
@@ -149,7 +167,7 @@ export function TrendLineChart({ monthlyIssueTrend }) {
       </div>
       <div style={{ height: '300px', width: '100%' }}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={monthlyIssueTrend} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+          <LineChart data={monthlyIssueTrend} margin={{ top: 25, right: 30, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
             <XAxis 
               dataKey="month" 
@@ -173,7 +191,9 @@ export function TrendLineChart({ monthlyIssueTrend }) {
               strokeWidth={2}
               dot={{ r: 4, fill: 'var(--accent-blue)' }}
               activeDot={{ r: 6 }}
-            />
+            >
+              <LabelList dataKey="issueCount" position="top" style={{ fill: 'var(--accent-blue)', fontSize: '11px', fontWeight: 600 }} />
+            </Line>
             <Line 
               yAxisId="right"
               type="monotone" 
@@ -183,7 +203,9 @@ export function TrendLineChart({ monthlyIssueTrend }) {
               strokeWidth={2}
               dot={{ r: 4, fill: 'var(--accent-cyan)' }}
               activeDot={{ r: 6 }}
-            />
+            >
+              <LabelList dataKey="avgLtv" position="top" formatter={(val) => formatINR(val)} style={{ fill: 'var(--accent-cyan)', fontSize: '11px', fontWeight: 600 }} />
+            </Line>
           </LineChart>
         </ResponsiveContainer>
       </div>
