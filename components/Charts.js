@@ -191,9 +191,7 @@ export function TrendLineChart({ monthlyIssueTrend }) {
               strokeWidth={2}
               dot={{ r: 4, fill: 'var(--accent-blue)' }}
               activeDot={{ r: 6 }}
-            >
-              <LabelList dataKey="issueCount" position="top" style={{ fill: 'var(--accent-blue)', fontSize: '11px', fontWeight: 600 }} />
-            </Line>
+            />
             <Line 
               yAxisId="right"
               type="monotone" 
@@ -203,9 +201,7 @@ export function TrendLineChart({ monthlyIssueTrend }) {
               strokeWidth={2}
               dot={{ r: 4, fill: 'var(--accent-cyan)' }}
               activeDot={{ r: 6 }}
-            >
-              <LabelList dataKey="avgLtv" position="top" formatter={(val) => formatINR(val)} style={{ fill: 'var(--accent-cyan)', fontSize: '11px', fontWeight: 600 }} />
-            </Line>
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
