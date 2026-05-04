@@ -304,7 +304,7 @@ export default function Dashboard() {
 
         {/* Executive Summary */}
         <div style={{ marginBottom: '24px' }}>
-          <ExecutiveSummary metrics={metrics} totalReviews={allReviews.length} />
+          <ExecutiveSummary metrics={metrics} totalReviews={allReviews.length} filteredCount={filteredCount} />
         </div>
 
         {/* Issue Priority Table */}

@@ -1,7 +1,7 @@
 import { formatINR } from '../lib/computeMetrics';
 
-export default function ExecutiveSummary({ metrics, totalReviews }) {
-  if (!metrics || metrics.issueStats.length === 0) {
+export default function ExecutiveSummary({ metrics, totalReviews, filteredCount }) {
+  if (!metrics || !metrics.issueStats || metrics.issueStats.length === 0) {
     return (
       <div className="card" style={{ padding: '24px', color: 'var(--text-muted)' }}>
         Generating executive summary...
@@ -13,6 +13,8 @@ export default function ExecutiveSummary({ metrics, totalReviews }) {
   const topIssue = sortedIssues[0];
   const topPlatform = topIssue.platform_stats[0]?.platform || 'unknown platform';
   const topProduct = metrics.productBreakdown[0]?.product || 'unknown product';
+
+  const countToDisplay = filteredCount && filteredCount < totalReviews ? filteredCount : totalReviews;
 
   return (
     <div className="card" style={{ padding: '24px', borderLeft: '4px solid var(--accent-blue)', background: 'var(--bg-panel)' }}>
@@ -27,7 +29,7 @@ export default function ExecutiveSummary({ metrics, totalReviews }) {
             Operational Risk Intelligence
           </div>
           <div style={{ fontSize: '14px', color: 'var(--text-primary)', lineHeight: 1.6 }}>
-            Analysis of <strong className="number-value">{totalReviews.toLocaleString('en-IN')}</strong> customer touchpoints identifies 
+            Analysis of <strong className="number-value">{countToDisplay.toLocaleString('en-IN')}</strong> customer touchpoints identifies 
             <strong style={{ color: '#ef4444' }}> {topIssue.name}</strong> as the primary driver of financial friction, 
             accounting for <strong className="number-value">{formatINR(topIssue.total_ltv_at_risk)}</strong> in potential churn. 
             The friction is most acute on <strong>{topPlatform}</strong>.
