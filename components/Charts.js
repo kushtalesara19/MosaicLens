@@ -14,11 +14,6 @@ const CustomTooltip = ({ active, payload, label }) => {
             {entry.name}: {entry.name.includes('LTV') ? formatINR(entry.value) : entry.value}
           </p>
         ))}
-        {payload[0].payload.ownership && (
-          <p style={{ margin: '4px 0 0', fontSize: '11px', color: 'var(--text-muted)' }}>
-            {payload[0].payload.ownership}
-          </p>
-        )}
       </div>
     );
   }
@@ -94,7 +89,7 @@ export function PlatformChart({ platformBreakdown }) {
               {platformBreakdown.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.ownership === 'Mosaic owns this' ? 'var(--accent-blue)' : '#f59e0b'} 
+                  fill="var(--accent-blue)" 
                 />
               ))}
               <LabelList 
@@ -106,14 +101,6 @@ export function PlatformChart({ platformBreakdown }) {
             </Bar>
           </BarChart>
         </ResponsiveContainer>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px', fontSize: '11px', color: 'var(--text-muted)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '8px', height: '8px', background: 'var(--accent-blue)' }} /> Mosaic Owned
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <div style={{ width: '8px', height: '8px', background: '#f59e0b' }} /> Partner Owned
-        </div>
       </div>
     </div>
   );

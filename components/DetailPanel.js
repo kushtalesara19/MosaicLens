@@ -139,7 +139,6 @@ export default function DetailPanel({ issue, coOccurrences, onClose }) {
                 <th style={{ textAlign: 'left', padding: '8px' }}>Platform</th>
                 <th style={{ textAlign: 'left', padding: '8px' }}>Complaints</th>
                 <th style={{ textAlign: 'left', padding: '8px' }}>LTV at Risk</th>
-                <th style={{ textAlign: 'left', padding: '8px' }}>Ownership</th>
               </tr>
             </thead>
             <tbody>
@@ -148,16 +147,6 @@ export default function DetailPanel({ issue, coOccurrences, onClose }) {
                   <td style={{ padding: '8px', color: 'var(--text-primary)' }}>{p.platform}</td>
                   <td style={{ padding: '8px' }} className="number-value">{p.count}</td>
                   <td style={{ padding: '8px', color: '#ef4444' }} className="number-value">{formatINR(p.ltv_risk)}</td>
-                  <td style={{ padding: '8px' }}>
-                    <span style={{ 
-                      padding: '2px 6px', 
-                      backgroundColor: p.ownership === 'Mosaic owns this' ? 'rgba(59,130,246,0.1)' : 'rgba(245,158,11,0.1)',
-                      color: p.ownership === 'Mosaic owns this' ? 'var(--accent-blue)' : '#f59e0b',
-                      fontSize: '10px'
-                    }}>
-                      {p.ownership}
-                    </span>
-                  </td>
                 </tr>
               ))}
             </tbody>

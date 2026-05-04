@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 :root {
-  --bg-dark: #f8fafc; /* slate-50 */
-  --bg-panel: #ffffff; /* white */
-  --text-primary: #0f172a; /* slate-900 */
-  --text-secondary: #475569; /* slate-600 */
-  --text-muted: #94a3b8; /* slate-400 */
-  --accent-blue: #2563eb; /* blue-600 */
-  --accent-cyan: #0891b2; /* cyan-600 */
-  --border: rgba(15, 23, 42, 0.1); /* subtle slate border */
-  --border-hover: rgba(15, 23, 42, 0.2);
+  --bg-dark: hsl(0, 0%, 100%);
+  --bg-panel: hsl(0, 0%, 100%);
+  --text-primary: hsl(0, 0%, 7%);
+  --text-secondary: hsl(0, 0%, 45%);
+  --text-muted: hsl(0, 0%, 45%);
+  --accent-blue: hsl(166, 60%, 35%);
+  --accent-cyan: hsl(166, 60%, 35%);
+  --border: hsl(0, 0%, 92%);
+  --border-hover: hsl(0, 0%, 85%);
 }
 
 body {
@@ -41,9 +41,9 @@ body {
 }
 
 .hero-kpi {
-  background: linear-gradient(135deg, #eff6ff, #f0f9ff) !important;
+  background: hsl(160, 20%, 96%) !important;
   border-color: var(--accent-blue) !important;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08) !important;
+  box-shadow: 0 2px 8px rgba(35, 140, 113, 0.08) !important;
 }
 
 .info-icon {

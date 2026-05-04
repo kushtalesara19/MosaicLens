@@ -30,7 +30,6 @@ export default function ResponseGap({ metrics }) {
             <th style={{ padding: '12px 16px', fontWeight: 600 }}>High-LTV Complaints</th>
             <th style={{ padding: '12px 16px', fontWeight: 600 }}>Responses Given</th>
             <th style={{ padding: '12px 16px', fontWeight: 600 }}>Response Rate</th>
-            <th style={{ padding: '12px 16px', fontWeight: 600 }}>Ownership</th>
           </tr>
         </thead>
         <tbody>
@@ -42,17 +41,6 @@ export default function ResponseGap({ metrics }) {
               <td style={{ padding: '12px 16px' }} className="number-value">
                 <span style={{ color: row.responseRate < 50 ? '#ef4444' : 'var(--text-primary)' }}>
                   {row.responseRate}%
-                </span>
-              </td>
-              <td style={{ padding: '12px 16px' }}>
-                <span style={{ 
-                  padding: '2px 8px', 
-                  backgroundColor: row.ownership === 'Mosaic owns this' ? 'rgba(59,130,246,0.1)' : 'rgba(245,158,11,0.1)',
-                  color: row.ownership === 'Mosaic owns this' ? 'var(--accent-blue)' : '#f59e0b',
-                  fontSize: '11px',
-                  fontWeight: 600
-                }}>
-                  {row.ownership}
                 </span>
               </td>
             </tr>
