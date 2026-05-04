@@ -20,6 +20,24 @@ export default function Dashboard() {
   const [fetchedCount, setFetchedCount] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState(null);
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (typeof window !== 'undefined') {
+        const currentScrollY = window.scrollY;
+        if (currentScrollY > lastScrollY && currentScrollY > 60) {
+          setShowHeader(false);
+        } else {
+          setShowHeader(true);
+        }
+        setLastScrollY(currentScrollY);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
 
   // Filters State
   const [filters, setFilters] = useState({
@@ -97,6 +115,8 @@ export default function Dashboard() {
           position: 'sticky',
           top: isDone ? 0 : '44px',
           zIndex: 50,
+          transform: showHeader ? 'translateY(0)' : 'translateY(-100%)',
+          transition: 'transform 0.3s ease-in-out',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
