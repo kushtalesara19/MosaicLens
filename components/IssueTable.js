@@ -60,7 +60,6 @@ export default function IssueTable({ issueStats, onRowClick }) {
               { id: 'total_ltv_at_risk', label: 'Total LTV at Risk' },
               { id: 'pct_repeat_customers', label: 'Repeat Customer %' },
               { id: 'avg_rating', label: 'Avg Rating' },
-              { id: 'validated_ltv', label: 'Validated LTV' },
               { id: 'brand_response_pct', label: 'Brand Response %' },
             ].map(col => (
               <th
@@ -101,9 +100,6 @@ export default function IssueTable({ issueStats, onRowClick }) {
               </td>
               <td style={{ padding: '16px', minWidth: '150px' }}>{renderBar(row.pct_repeat_customers)}</td>
               <td style={{ padding: '16px' }}>{renderRatingDots(row.avg_rating)}</td>
-              <td style={{ padding: '16px', color: 'var(--accent-cyan)' }} className="number-value">
-                {formatINR(row.validated_ltv)}
-              </td>
               <td style={{ padding: '16px' }}>{renderBar(row.brand_response_pct)}</td>
             </tr>
           ))}
